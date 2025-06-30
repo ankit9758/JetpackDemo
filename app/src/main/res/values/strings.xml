@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">JetPackDemo</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="pass_hint">Enter your password</string>
+    <string name="welcome_txt">Hello\nSign In </string>
 </resources>
