@@ -2,9 +2,13 @@ package com.example.jetpackdemo.presentation.auth.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +20,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -29,11 +34,12 @@ import com.example.jetpackdemo.utils.OutLineEditText
 import com.example.jetpackdemo.utils.Utility
 
 @Composable
-fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSignup: () -> Unit) {
+fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSignup: () -> Unit,onNavigateToForgotPassword: () -> Unit) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     JetpackDemoTheme {
         Box(
@@ -89,7 +95,7 @@ fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSign
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxSize().verticalScroll(scrollState).imePadding() // important!
                             .padding(top = 80.dp, start = 20.dp, end = 20.dp, bottom = 30.dp)
                     ) {
                         OutLineEditText(
@@ -98,28 +104,34 @@ fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSign
                             modifier = Modifier.fillMaxWidth(),
                             label = stringResource(R.string.email),
                             placeHolder = stringResource(R.string.enter_email),
-                            keyboardType = KeyboardType.Email
+                            keyboardType = KeyboardType.Email,
+                            startIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email Icon", tint = Color.Gray) }
 
                         )
 
                         OutLineEditText(
                             value = password,
                             onValueChange = { password = it },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                             label = stringResource(R.string.password),
                             placeHolder = stringResource(R.string.enter_password),
+                            imeAction = ImeAction.Done,
                             keyboardType = KeyboardType.Password,
-                            isPassword = !passwordVisible
+                            isPassword = !passwordVisible,
+                            startIcon = { Icon(imageVector = Icons.Default.Settings, contentDescription = "Setting Icon", tint = Color.Gray) }
                         )
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 15.dp, bottom = 30.dp),
-                            text = stringResource(id = R.string.forgot_password),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xFF52BFE3),
-                            textAlign = TextAlign.Right
-                        )
+                        TextButton(onClick = onNavigateToForgotPassword) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 15.dp, bottom = 30.dp),
+                                text = stringResource(id = R.string.forgot_password),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color(0xFF52BFE3),
+                                textAlign = TextAlign.Right
+                            )
+                        }
+
                         CustomButton(
                             text = stringResource(R.string.login),
                             modifier = Modifier.fillMaxWidth(),
@@ -136,7 +148,7 @@ fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSign
                             Text(
                                 text = stringResource(id = R.string.do_not_account),
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color(0xFF52BFE3),
+                                color = Color.Gray,
                             )
                             Text(
                                 text = stringResource(id = R.string.register),

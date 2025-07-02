@@ -4,13 +4,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun OutLineEditText(
@@ -21,7 +18,9 @@ fun OutLineEditText(
     singleLine: Boolean = true,
     isPassword: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
-    trailingIcon: @Composable (() -> Unit)? = null
+    imeAction: ImeAction =ImeAction.Next,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    startIcon: @Composable (() -> Unit)? = null
 ) {
     val visualTransformation =
         if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
@@ -32,8 +31,9 @@ fun OutLineEditText(
         placeholder = { Text(placeHolder) },
         singleLine = singleLine,
         textStyle =MaterialTheme.typography.titleMedium,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         visualTransformation = visualTransformation,
-        trailingIcon = trailingIcon
+        trailingIcon = trailingIcon, leadingIcon = startIcon
+
     )
 }

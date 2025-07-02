@@ -31,7 +31,7 @@ fun SplashScreen(navController:NavController){
 
     // Delay navigation using side-effect
     LaunchedEffect(Unit) {
-        delay(3000) // 3 seconds delay
+        delay(1000) // 3 seconds delay
         isLoading.value = false
         navController.navigate("login") {
             popUpTo("splash") { inclusive = true }
