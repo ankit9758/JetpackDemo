@@ -50,6 +50,7 @@ val Typography = Typography(
         headlineLarge = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Bold,   fontSize = 32.sp),
         headlineMedium= TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Medium, fontSize = 28.sp),
         titleLarge    = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
+        titleMedium    = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.SemiBold, fontSize = 18.sp),
         bodyLarge     = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Normal, fontSize = 16.sp),
         bodyMedium    = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Normal, fontSize = 14.sp),
         labelSmall    = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Medium, fontSize = 11.sp),

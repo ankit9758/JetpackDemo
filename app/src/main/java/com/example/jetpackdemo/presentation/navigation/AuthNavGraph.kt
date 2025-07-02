@@ -12,7 +12,10 @@ import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 
 @Composable
 fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "splash") {
+        composable("splash") {
+            SplashScreen(navController)
+        }
         composable("login") {
             val authViewModel: AuthViewModel = hiltViewModel()
             LoginScreen(
