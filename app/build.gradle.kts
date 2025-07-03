@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
 
+    implementation(libs.androidx.nav.compose)
+
 
 
     testImplementation(libs.junit)

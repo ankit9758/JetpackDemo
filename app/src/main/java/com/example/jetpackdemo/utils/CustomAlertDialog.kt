@@ -41,68 +41,71 @@ fun CustomAlertDialog(
 
         onDismissRequest = { /* non‑dismissible unless onClose is called */ },
         properties = DialogProperties(
+            usePlatformDefaultWidth = false, // 🔥 disables default padding
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
         )
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            elevation = CardDefaults.cardElevation(6.dp)
+        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp) // This keeps it away from screen edge
         ) {
-            Box {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+                Box {
+                    /* Main content centred */
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 10.dp)
+                            .align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFF44336),
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFF44336),
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Text(
+                            text = message,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
 
-
-                /* Main content centred */
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp, vertical = 10.dp)
-                        .align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFF44336),
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = if (isSuccess) Color(0xFF4CAF50) else Color(0xFFF44336),
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = message,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-
-                    if(!isSuccess){
-                        Spacer(Modifier.height(20.dp))
-                        Button(onClick = onConfirm) {
-                            Text(confirmText,style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
+                        if(!isSuccess){
+                            Spacer(Modifier.height(20.dp))
+                            Button(onClick = onConfirm) {
+                                Text(confirmText,style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
+                            }
                         }
+
                     }
+                    /* ✕ icon pinned to the very corner */
+                    IconButton(
+                        onClick = onClose,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
 
-                }
-                /* ✕ icon pinned to the very corner */
-                IconButton(
-                    onClick = onClose,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.Gray
-                    )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = Color.Gray
+                        )
+                    }
                 }
             }
         }
+
     }
 }

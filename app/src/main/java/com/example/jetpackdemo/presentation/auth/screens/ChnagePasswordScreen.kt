@@ -243,7 +243,10 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
                 title = context.getString(R.string.reset_password),
                 message = context.getString(R.string.password_change_success),
                 isSuccess = true,
-                onClose = { showSuccess = false },
+                onClose = {
+                    showSuccess = false
+                    onChangePasswordUseCase()
+                },
                 onConfirm = {
                     showSuccess = false
                     onChangePasswordUseCase()
