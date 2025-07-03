@@ -89,7 +89,7 @@ class AuthViewModel @Inject constructor(
                 if (result) {
                     _uiState.emit(AuthUiState.Success)
                 } else {
-                    _uiState.emit(AuthUiState.ErrorWithId(R.string.went_wrong))
+                    _uiState.emit(AuthUiState.Error("Something went wrong"))
                 }
             }
 

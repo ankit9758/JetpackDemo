@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
@@ -39,12 +41,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.jetpackdemo.R
 import com.example.jetpackdemo.domain.model.User
-import com.example.jetpackdemo.domain.usecase.ChangePasswordUseCase
 import com.example.jetpackdemo.presentation.auth.AuthUiState
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.ui.theme.Montserrat
 import com.example.jetpackdemo.utils.BackToolbar
+import com.example.jetpackdemo.utils.CustomAlertDialog
 import com.example.jetpackdemo.utils.CustomButton
 import com.example.jetpackdemo.utils.LoadingOverlay
 import com.example.jetpackdemo.utils.OutLineEditText
@@ -62,6 +64,9 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     /** <- NEW: flag that drives the progress bar */
     var isLoading by remember { mutableStateOf(false) }
+    var showSuccess by remember { mutableStateOf(false) }
+    var showError by remember { mutableStateOf(false) }
+
 
 
     LaunchedEffect(Unit) {
@@ -70,18 +75,21 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
             when (state) {
                 is AuthUiState.Success -> {
                     isLoading = false
-                    Utility.showToast(context, context.getString(R.string.password_change_success))
-                    onChangePasswordUseCase()
+                    showSuccess =true
+//                    Utility.showToast(context, context.getString(R.string.password_change_success))
+
                 }
 
                 is AuthUiState.Error -> {
                     isLoading = false
+                    showError = true
                     Utility.showToast(context, (state).message)
                 }
 
                 is AuthUiState.ErrorWithId -> {
                     isLoading = false
-                    Utility.showToast(context, context.getString(state.id))
+                    showError = true
+                  //  Utility.showToast(context, context.getString(state.id))
                 }
 
                 is AuthUiState.Loading -> {
@@ -91,7 +99,6 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
                     isLoading = false
                    val user=state.data as? User
                     user?.let {
-                        Log.d("EMAIL-->",""+ it.password)
                        currentPassword = it.password
                     }
                 }
@@ -230,6 +237,35 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
             }
         }
         LoadingOverlay(isLoading)
+        if (showSuccess) {
+            CustomAlertDialog(
+                icon = Icons.Default.CheckCircle,
+                title = context.getString(R.string.reset_password),
+                message = context.getString(R.string.password_change_success),
+                isSuccess = true,
+                onClose = { showSuccess = false },
+                onConfirm = {
+                    showSuccess = false
+                    onChangePasswordUseCase()
+                }
+            )
+        }
+        if (showError) {
+            CustomAlertDialog(
+                icon = Icons.Default.Close,
+                title = "Error",
+                message = "Something went wrong. Please try again.",
+                isSuccess = false,
+                confirmText = "Retry",
+                onClose = {
+                    showError = false
+                },
+                onConfirm = {
+                    showError = false
+                }
+
+            )
+        }
 
     }
 
