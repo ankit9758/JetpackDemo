@@ -43,7 +43,7 @@ import com.example.jetpackdemo.utils.OutLineEditText
 
 @Composable
 fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
-                         onNavigateToEmailVerification: () -> Unit
+                         onNavigateToEmailVerification: (String) -> Unit
                          ,onBackButtonClick: () -> Unit){
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
@@ -119,7 +119,7 @@ fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
                             text = stringResource(R.string.recover_password),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                onNavigateToEmailVerification()
+                                onNavigateToEmailVerification(email)
                             })
 
 

@@ -1,14 +1,16 @@
 package com.example.jetpackdemo.presentation.auth.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +36,11 @@ import com.example.jetpackdemo.utils.OutLineEditText
 import com.example.jetpackdemo.utils.Utility
 
 @Composable
-fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSignup: () -> Unit,onNavigateToForgotPassword: () -> Unit) {
+fun LoginScreen(
+    authViewModel: AuthViewModel = hiltViewModel(),
+    onNavigateToSignup: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit
+) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -95,30 +101,57 @@ fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSign
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize().verticalScroll(scrollState).imePadding() // important!
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                            .imePadding() // important!
                             .padding(top = 80.dp, start = 20.dp, end = 20.dp, bottom = 30.dp)
                     ) {
                         OutLineEditText(
                             value = email,
-                            onValueChange = { email = it },
+                            onValueChange = { email = it.filter { char ->
+                                char.isLetterOrDigit() || char in listOf('@', '.', '_', '-')
+                            } },
                             modifier = Modifier.fillMaxWidth(),
                             label = stringResource(R.string.email),
                             placeHolder = stringResource(R.string.enter_email),
                             keyboardType = KeyboardType.Email,
-                            startIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email Icon", tint = Color.Gray) }
+                            startIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Email,
+                                    contentDescription = "Email Icon",
+                                    tint = Color.Gray
+                                )
+                            }
 
                         )
 
                         OutLineEditText(
                             value = password,
                             onValueChange = { password = it },
-                            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp),
                             label = stringResource(R.string.password),
                             placeHolder = stringResource(R.string.enter_password),
                             imeAction = ImeAction.Done,
                             keyboardType = KeyboardType.Password,
                             isPassword = !passwordVisible,
-                            startIcon = { Icon(imageVector = Icons.Default.Settings, contentDescription = "Setting Icon", tint = Color.Gray) }
+                            trailingIcon = {
+                                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Info,
+                                        contentDescription = "Setting Icon"
+                                    )
+
+                                }
+                            },
+                            startIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = "Setting Icon",
+                                    tint = Color.Gray
+                                )
+                            }
                         )
                         TextButton(onClick = onNavigateToForgotPassword) {
                             Text(
@@ -151,12 +184,15 @@ fun LoginScreen(authViewModel: AuthViewModel = hiltViewModel(), onNavigateToSign
                                 color = Color.Gray,
                             )
                             Text(
+                                modifier = Modifier.clickable {
+                                    onNavigateToSignup()
+                                },
                                 text = stringResource(id = R.string.register),
                                 style = MaterialTheme.typography.titleMedium,
                                 textDecoration = TextDecoration.Underline,
                                 color = Color(0xFF1E9AC4),
 
-                            )
+                                )
                         }
                     }
 

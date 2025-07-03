@@ -15,36 +15,37 @@ import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 @Composable
 fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = "splash") {
-        composable("splash") {
+        composable(route = "splash") {
             SplashScreen(navController)
         }
-        composable("login") {
+        composable(route = "login") {
             val authViewModel: AuthViewModel = hiltViewModel()
             LoginScreen(
                 authViewModel = authViewModel,
-                onNavigateToSignup = { navController.navigate("register") },
-                onNavigateToForgotPassword = { navController.navigate("ForgotPassword") }
+                onNavigateToSignup = { navController.navigate(route = "register") },
+                onNavigateToForgotPassword = { navController.navigate(route = "ForgotPassword") }
 
             )
         }
-        composable("register") {
+        composable(route = "register") {
             val authViewModel: AuthViewModel = hiltViewModel()
             RegisterScreen(
                 authViewModel = authViewModel,
                 onNavigateBack = { navController.navigateUp() })
         }
 
-        composable("ForgotPassword") {
+        composable(route = "ForgotPassword") {
             val authViewModel: AuthViewModel = hiltViewModel()
             ForgotPasswordScreen(
                 authViewModel = authViewModel,
-                onNavigateToEmailVerification = { navController.navigate("VerifyEmailByOtp") },
+                onNavigateToEmailVerification = { email->navController.navigate(route = "VerifyEmailByOtp/$email") },
                 onBackButtonClick = { navController.popBackStack() })
         }
-        composable("VerifyEmailByOtp") {
+        composable(route = "VerifyEmailByOtp/{email}") { backStackEntry->
+            val email=backStackEntry.arguments?.getString("email")?:""
             val authViewModel: AuthViewModel = hiltViewModel()
             VerifyEmailByOtpScreen(authViewModel = authViewModel,
-                onBackButtonClick = { navController.popBackStack() })
+                onBackButtonClick = { navController.popBackStack() }, email = email)
         }
     }
 

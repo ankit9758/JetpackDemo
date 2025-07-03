@@ -19,6 +19,7 @@ fun OutLineEditText(
     isPassword: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction =ImeAction.Next,
+    maxLength: Int? = null  ,
     trailingIcon: @Composable (() -> Unit)? = null,
     startIcon: @Composable (() -> Unit)? = null
 ) {
@@ -26,7 +27,11 @@ fun OutLineEditText(
         if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
 
     OutlinedTextField(
-        value = value, onValueChange = onValueChange, modifier = modifier,
+        value = value,   onValueChange = {
+            if (maxLength == null || it.length <= maxLength) {
+                onValueChange(it)
+            }
+        }, modifier = modifier,
         label = { Text(label) },
         placeholder = { Text(placeHolder) },
         singleLine = singleLine,
