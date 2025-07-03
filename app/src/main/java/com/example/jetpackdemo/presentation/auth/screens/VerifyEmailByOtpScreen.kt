@@ -45,7 +45,7 @@ import com.example.jetpackdemo.utils.Utility
 
 @Composable
 fun VerifyEmailByOtpScreen(authViewModel: AuthViewModel = hiltViewModel(),
-                           onBackButtonClick: () -> Unit,email:String) {
+                           onBackButtonClick: () -> Unit,onNavigateToChangePassword:(String)->Unit,email:String) {
     val context = LocalContext.current
     var otp by remember { mutableStateOf("") }
 
@@ -120,7 +120,7 @@ fun VerifyEmailByOtpScreen(authViewModel: AuthViewModel = hiltViewModel(),
 
                         OtpScreen { enteredOtp ->
                             otp = enteredOtp
-                            Utility.showToast(context,"OTP: $enteredOtp")
+                        //    Utility.showToast(context,"OTP: $enteredOtp")
                         }
                         Row(
                             modifier = Modifier
@@ -151,7 +151,12 @@ fun VerifyEmailByOtpScreen(authViewModel: AuthViewModel = hiltViewModel(),
                             text = stringResource(R.string.verify_proceed),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                Utility.showToast(context, "Hello")
+                                if(otp=="1111"){
+                                  onNavigateToChangePassword(email)
+                                }else{
+                                    Utility.showToast(context, context.getString(R.string.valid_otp_error))
+                                }
+
                             })
 
 

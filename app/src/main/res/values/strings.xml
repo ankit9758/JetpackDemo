@@ -16,13 +16,16 @@
     <string name="mobile_no">Mobile No </string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="reset_password">Reset Password</string>
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="enter_phone">Enter your Mobile/Phone No</string>
     <string name="enter_name">Enter your name</string>
     <string name="enter_email">Enter your Email</string>
     <string name="enter_password">Enter your Password</string>
+    <string name="continue_txt">Continue</string>
     <string name="enter_new_password">Enter New Password</string>
+    <string name="new_password_desc">You new password must be different from previously used password</string>
     <string name="enter_confirm_password">Enter confirm Password</string>
     <string name="enter_mobile">Enter your phone number</string>
     <string name="do_not_account">Don\'t have an account?</string>
@@ -33,7 +36,16 @@
     <string name="associate_email">Enter the email address associated with you account </string>
     <string name="password_same_error">Confirm Password and password must be same.</string>
     <string name="new_password_same_error">your new password must be different from previously used password</string>
-    <string name="email_error">Please Enter your Email.</string>
-    <string name="password_error">Please Enter your Password.</string>
+    <string name="email_error">Please enter your Email.</string>
+    <string name="name_error">Please enter your name.</string>
+    <string name="phone_error">Please enter your phone number</string>
+    <string name="valid_email">Please enter valid Email.</string>
+    <string name="password_error">Please enter your Password.</string>
+    <string name="confirm_password_error">Please enter confirm Password.</string>
+    <string name="valid_credential_error">Please enter valid credential.</string>
     <string name="mail_address">Mail Address Here</string>
+    <string name="valid_otp_error">Please enter valid OTP.</string>">
+    <string name="went_wrong">Something went wrong</string>">
+    <string name="password_change_success">Password changed successfully</string>">
+
 </resources>

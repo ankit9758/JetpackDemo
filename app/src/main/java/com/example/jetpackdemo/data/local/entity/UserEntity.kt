@@ -1,21 +1,23 @@
 package com.example.jetpackdemo.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.jetpackdemo.domain.model.User
 
-@Entity(tableName = "user_table")
+@Entity(tableName = "user_table", indices = [Index(value = ["email"], unique = true)])
 data class UserEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val username: String,
     val email: String,
-    val password: String
+    val password: String,
+    val phoneNumber: String
 )
 
 fun UserEntity.toUser(): User {
-    return User(id = id, username = username, email = email, password = password)
+    return User(username = username, email = email, password = password, phoneNumber = phoneNumber)
 }
 
 fun User.toEntity(): UserEntity {
-    return UserEntity(id = id, username = username, email = email, password = password)
+    return UserEntity(username = username, email = email, password = password,phoneNumber=phoneNumber)
 }

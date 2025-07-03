@@ -7,6 +7,8 @@ import com.example.jetpackdemo.data.local.AppDataBase
 import com.example.jetpackdemo.data.local.dao.UserDao
 import com.example.jetpackdemo.data.repositoryImpl.AuthRepositoryImpl
 import com.example.jetpackdemo.domain.repository.AuthRepository
+import com.example.jetpackdemo.domain.usecase.ChangePasswordUseCase
+import com.example.jetpackdemo.domain.usecase.ForgotPasswordUseCase
 import com.example.jetpackdemo.domain.usecase.LoginUseCase
 import com.example.jetpackdemo.domain.usecase.RegisterUseCase
 import dagger.Module
@@ -46,4 +48,14 @@ object AppModule {
     fun provideRegisterUseCase(authRepository: AuthRepository): RegisterUseCase {
         return RegisterUseCase(authRepository)
     }
+    @Provides
+    fun provideChangePasswordUseCase(authRepository: AuthRepository): ChangePasswordUseCase {
+        return ChangePasswordUseCase(authRepository)
+    }
+    @Provides
+    fun provideForgotPasswordUseCase(authRepository: AuthRepository): ForgotPasswordUseCase {
+        return ForgotPasswordUseCase(authRepository)
+    }
+
+
 }

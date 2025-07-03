@@ -6,11 +6,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.jetpackdemo.presentation.auth.screens.ChangePasswordScreen
 import com.example.jetpackdemo.presentation.auth.screens.ForgotPasswordScreen
 import com.example.jetpackdemo.presentation.auth.screens.LoginScreen
 import com.example.jetpackdemo.presentation.auth.screens.RegisterScreen
 import com.example.jetpackdemo.presentation.auth.screens.VerifyEmailByOtpScreen
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
+import com.example.jetpackdemo.presentation.home.screens.HomeScreen
 
 @Composable
 fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
@@ -23,7 +25,11 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
             LoginScreen(
                 authViewModel = authViewModel,
                 onNavigateToSignup = { navController.navigate(route = "register") },
-                onNavigateToForgotPassword = { navController.navigate(route = "ForgotPassword") }
+                onNavigateToForgotPassword = { navController.navigate(route = "ForgotPassword") },
+                onNavigateToHomeScreen={name->navController.navigate(route = "Home/$name"){
+                    popUpTo(0)    // ⬅️ clears ALL previous destinations
+                    launchSingleTop =true
+                }}
 
             )
         }
@@ -31,7 +37,12 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
             val authViewModel: AuthViewModel = hiltViewModel()
             RegisterScreen(
                 authViewModel = authViewModel,
-                onNavigateBack = { navController.navigateUp() })
+                onNavigateBack = { navController.navigateUp() },
+                onNavigateToHomeScreen={ name->navController.navigate(route = "Home/$name"){
+                    popUpTo(0)    // ⬅️ clears ALL previous destinations
+                    launchSingleTop =true
+                } }
+            )
         }
 
         composable(route = "ForgotPassword") {
@@ -45,8 +56,27 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
             val email=backStackEntry.arguments?.getString("email")?:""
             val authViewModel: AuthViewModel = hiltViewModel()
             VerifyEmailByOtpScreen(authViewModel = authViewModel,
-                onBackButtonClick = { navController.popBackStack() }, email = email)
+                onBackButtonClick = { navController.popBackStack() },
+                onNavigateToChangePassword={navController.navigate(route = "ChangePassword/$email")},
+                email = email)
+        }
+        composable(route = "ChangePassword/{email}") { backStackEntry->
+            val email=backStackEntry.arguments?.getString("email")?:""
+            val authViewModel: AuthViewModel = hiltViewModel()
+            ChangePasswordScreen(authViewModel = authViewModel,
+                onBackButtonClick = { navController.popBackStack() },
+                onChangePasswordUseCase = {navController.navigate(route = "login"){
+                    popUpTo(0)    // ⬅️ clears ALL previous destinations
+                    launchSingleTop =true
+                } },
+                email = email)
+        }
+        composable(route = "Home/{name}") { backStackEntry->
+            val name=backStackEntry.arguments?.getString("name")?:""
+            val authViewModel: AuthViewModel = hiltViewModel()
+            HomeScreen(authViewModel = authViewModel, name = name)
         }
     }
+
 
 }

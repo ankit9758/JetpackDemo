@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,19 +35,58 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.jetpackdemo.R
+import com.example.jetpackdemo.presentation.auth.AuthUiState
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.ui.theme.Montserrat
 import com.example.jetpackdemo.utils.BackToolbar
 import com.example.jetpackdemo.utils.CustomButton
+import com.example.jetpackdemo.utils.LoadingOverlay
 import com.example.jetpackdemo.utils.OutLineEditText
+import com.example.jetpackdemo.utils.Utility
 
 @Composable
-fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
-                         onNavigateToEmailVerification: (String) -> Unit
-                         ,onBackButtonClick: () -> Unit){
+fun ForgotPasswordScreen(
+    authViewModel: AuthViewModel = hiltViewModel(),
+    onNavigateToEmailVerification: (String) -> Unit, onBackButtonClick: () -> Unit
+) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
+
+    /** <- NEW: flag that drives the progress bar */
+    var isLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        authViewModel.uiState.collect { state ->
+            when (state) {
+                is AuthUiState.Success -> {
+                    isLoading = false
+                    onNavigateToEmailVerification(email)
+                }
+
+                is AuthUiState.Error -> {
+                    isLoading = false
+                    Utility.showToast(context, (state).message)
+
+
+                }
+
+                is AuthUiState.ErrorWithId -> {
+                    isLoading = false
+                    Utility.showToast(context, context.getString(state.id))
+                }
+
+                AuthUiState.Loading -> {
+                    isLoading = true
+                }
+
+                else -> {
+
+                }
+            }
+        }
+    }
+
 
     JetpackDemoTheme {
         Box(
@@ -62,6 +102,7 @@ fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
                     )
                 ),
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -89,13 +130,21 @@ fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
 
                         Text(
                             text = stringResource(id = R.string.mail_address),
-                            style = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Bold, fontSize = 22.sp),
+                            style = TextStyle(
+                                fontFamily = Montserrat,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 22.sp
+                            ),
                             color = Color(0xFF2196F3), modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
                         Text(
                             text = stringResource(id = R.string.associate_email),
-                            style = TextStyle(fontFamily = Montserrat, fontWeight = FontWeight.Thin, fontSize = 18.sp),
+                            style = TextStyle(
+                                fontFamily = Montserrat,
+                                fontWeight = FontWeight.Thin,
+                                fontSize = 18.sp
+                            ),
                             color = Color.Gray, modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(20.dp),
@@ -110,7 +159,13 @@ fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
                             placeHolder = stringResource(R.string.enter_email),
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Done,
-                            startIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email Icon", tint = Color.Gray) }
+                            startIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Email,
+                                    contentDescription = "Email Icon",
+                                    tint = Color.Gray
+                                )
+                            }
 
                         )
                         Spacer(modifier = Modifier.size(40.dp))
@@ -119,7 +174,7 @@ fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
                             text = stringResource(R.string.recover_password),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                onNavigateToEmailVerification(email)
+                                authViewModel.onRecoverPassword(email)
                             })
 
 
@@ -127,8 +182,8 @@ fun ForgotPasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),
 
                 }
 
-
             }
+            LoadingOverlay(isLoading)
         }
 
 

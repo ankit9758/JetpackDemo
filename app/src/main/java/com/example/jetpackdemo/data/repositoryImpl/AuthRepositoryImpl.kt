@@ -10,12 +10,17 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(private val userDao: UserDao) : AuthRepository{
-    override suspend fun insertUser(user: User) {
-        userDao.insertUser(user.toEntity())
+    override suspend fun insertUser(user: User):Boolean {
+        val rowId =userDao.insertUser(user.toEntity())
+        return rowId != -1L     // ‑1 means UNIQUE constraint hit
     }
 
     override suspend fun findByEmail(email: String,password:String): User? {
       return userDao.findByEmail(email)?.toUser()
+    }
+
+    override suspend fun updateUserPassword(email: String, password: String): Boolean {
+        return userDao.updateUserPassword(password, email) > 0
     }
 
     override fun getAllUser(): Flow<List<User>> {
