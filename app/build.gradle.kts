@@ -63,6 +63,7 @@ dependencies {
 
     implementation(libs.androidx.nav.compose)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.gson)
 
 
 

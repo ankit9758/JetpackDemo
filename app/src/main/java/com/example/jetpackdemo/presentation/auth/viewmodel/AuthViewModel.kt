@@ -44,6 +44,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch { userPreferences.setLoggedIn(true) }
     }
 
+
     fun logout() {
         viewModelScope.launch { userPreferences.clear() }
     }
@@ -61,7 +62,7 @@ class AuthViewModel @Inject constructor(
                 _uiState.emit( AuthUiState.Loading)
                 val result = loginUseCase.invoke(email, password)
                 if (result != null) {
-                        setLoggedIn()
+                        saveUserData(result)
                     _uiState.emit(AuthUiState.Success)
                 } else {
                     _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_credential_error))
@@ -139,9 +140,10 @@ class AuthViewModel @Inject constructor(
             else {
                 _uiState.emit( AuthUiState.Loading)
                 delay(1500)
-                val result = registerUseCase.invoke(User(email = email, password = password, username =name, phoneNumber = phoneNumber))
+                val user=User(email = email, password = password, username =name, phoneNumber = phoneNumber)
+                val result = registerUseCase.invoke(user)
                 if (result) {
-                      setLoggedIn()
+                    saveUserData(user)
                     _uiState.emit(AuthUiState.Success)
                 } else {
                     _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_credential_error))
@@ -152,6 +154,14 @@ class AuthViewModel @Inject constructor(
         }
 
     }
+
+    private fun saveUserData(user: User) {
+        viewModelScope.launch {
+            userPreferences.saveProfile(user)
+        }
+        setLoggedIn()
+    }
+
     fun findUserDetailByEmail(email: String) {
         viewModelScope.launch {
             _uiState.emit( AuthUiState.Loading)

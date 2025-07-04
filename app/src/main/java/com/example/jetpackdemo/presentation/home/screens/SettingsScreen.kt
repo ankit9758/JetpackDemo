@@ -16,10 +16,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,6 +32,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,13 +54,20 @@ import com.example.jetpackdemo.R
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.utils.LogoutDialog
+import com.example.jetpackdemo.utils.UserPreferences
 
 @Composable
 fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,onLogoutConfirm: () -> Unit) {
-    var showLogout by remember { mutableStateOf(false) }
+    val ctx = LocalContext.current
+    val profileFlow = remember { UserPreferences(ctx).getProfile() }
+    // collect → Compose State
+    val profile by profileFlow.collectAsState(initial = null)
 
+    var showLogout by remember { mutableStateOf(false) }
     /* --- local state for the Push‑Notification switch --- */
     var pushEnabled by remember { mutableStateOf(true) }
+
+
     JetpackDemoTheme {
         Scaffold() { innerPad ->
             LazyColumn(
@@ -90,7 +99,7 @@ fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,
 
                         Column(Modifier.weight(1f)) {
                             Text("Welcome", style = MaterialTheme.typography.labelMedium)
-                            Text("Mr. John Doe", style = MaterialTheme.typography.titleMedium)
+                            Text("Mr. ${profile?.username}", style = MaterialTheme.typography.titleMedium)
                         }
 
                         IconButton(onClick = {
@@ -102,7 +111,7 @@ fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,
                     HorizontalDivider(Modifier.padding(vertical = 16.dp))
                 }
                 /* ---------- normal list items ---------- */
-                item { SettingsRow(Icons.Filled.Person, "User Profile", { }) }
+                item { SettingsRow(Icons.Default.Edit, "Edit Profile", { }) }
                 item { SettingsRow(Icons.Filled.Lock, "Change Password", { }) }
                 item { SettingsRow(Icons.Outlined.Info, "FAQs", { }) }
                 /* ---------- switch row ---------- */
