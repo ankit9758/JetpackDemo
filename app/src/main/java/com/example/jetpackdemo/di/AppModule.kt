@@ -11,6 +11,7 @@ import com.example.jetpackdemo.domain.usecase.ChangePasswordUseCase
 import com.example.jetpackdemo.domain.usecase.ForgotPasswordUseCase
 import com.example.jetpackdemo.domain.usecase.LoginUseCase
 import com.example.jetpackdemo.domain.usecase.RegisterUseCase
+import com.example.jetpackdemo.utils.UserPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,6 +57,10 @@ object AppModule {
     fun provideForgotPasswordUseCase(authRepository: AuthRepository): ForgotPasswordUseCase {
         return ForgotPasswordUseCase(authRepository)
     }
-
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
+        return UserPreferences(context)
+    }
 
 }

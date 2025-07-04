@@ -78,7 +78,7 @@ fun RegisterScreen(authViewModel: AuthViewModel = hiltViewModel(),onNavigateBack
             when (state) {
                 is AuthUiState.Success -> {
                     isLoading = false
-                    onNavigateToHomeScreen(name)
+                    onNavigateToHomeScreen(email)
                 }
 
                 is AuthUiState.Error -> {

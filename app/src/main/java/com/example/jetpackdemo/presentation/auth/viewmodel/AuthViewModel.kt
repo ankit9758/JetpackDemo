@@ -10,10 +10,14 @@ import com.example.jetpackdemo.domain.usecase.ForgotPasswordUseCase
 import com.example.jetpackdemo.domain.usecase.LoginUseCase
 import com.example.jetpackdemo.domain.usecase.RegisterUseCase
 import com.example.jetpackdemo.presentation.auth.AuthUiState
+import com.example.jetpackdemo.utils.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,12 +26,28 @@ class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
 
     private val _uiState = MutableSharedFlow<AuthUiState>()
     val uiState = _uiState.asSharedFlow()
     private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
+
+    val isLoggedIn: StateFlow<Boolean> = userPreferences.isLoggedIn.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        false
+    )
+
+   private fun setLoggedIn() {
+        viewModelScope.launch { userPreferences.setLoggedIn(true) }
+    }
+
+    fun logout() {
+        viewModelScope.launch { userPreferences.clear() }
+    }
+
 
     fun onLogin(email: String, password: String) {
         viewModelScope.launch {
@@ -41,6 +61,7 @@ class AuthViewModel @Inject constructor(
                 _uiState.emit( AuthUiState.Loading)
                 val result = loginUseCase.invoke(email, password)
                 if (result != null) {
+                        setLoggedIn()
                     _uiState.emit(AuthUiState.Success)
                 } else {
                     _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_credential_error))
@@ -120,6 +141,7 @@ class AuthViewModel @Inject constructor(
                 delay(1500)
                 val result = registerUseCase.invoke(User(email = email, password = password, username =name, phoneNumber = phoneNumber))
                 if (result) {
+                      setLoggedIn()
                     _uiState.emit(AuthUiState.Success)
                 } else {
                     _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_credential_error))

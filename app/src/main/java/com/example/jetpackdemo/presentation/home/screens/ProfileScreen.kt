@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 
 @Composable
-fun HomeScreen(){
+fun ProfileScreen(){
     JetpackDemoTheme {
         Box(
             modifier = Modifier
@@ -28,11 +26,9 @@ fun HomeScreen(){
                         ),
                     )
                 ),
-            contentAlignment = Alignment.Center,
-
         ) {
             Text(
-                text =  "Home Screen",
+                text =  "Profile Screen",
                 style = MaterialTheme.typography.displayMedium,
                 color = Color.White,
             )

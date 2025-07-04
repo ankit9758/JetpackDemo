@@ -62,6 +62,7 @@ dependencies {
     kapt(libs.room.compiler)
 
     implementation(libs.androidx.nav.compose)
+    implementation(libs.androidx.datastore.preferences)
 
 
 

@@ -1,60 +1,44 @@
 package com.example.jetpackdemo.presentation.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.runtime.Composable
+
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.jetpackdemo.presentation.auth.screens.ChangePasswordScreen
 import com.example.jetpackdemo.presentation.auth.screens.ForgotPasswordScreen
 import com.example.jetpackdemo.presentation.auth.screens.LoginScreen
 import com.example.jetpackdemo.presentation.auth.screens.RegisterScreen
 import com.example.jetpackdemo.presentation.auth.screens.VerifyEmailByOtpScreen
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
-import com.example.jetpackdemo.presentation.home.screens.HomeScreen
+import com.example.jetpackdemo.utils.Routes
 
-@Composable
-fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
-    NavHost(
-        navController = navController, startDestination = "splash",
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(350)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Left,
-                animationSpec = tween(350)
-            )
-        },
-        popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(350)
-            )
-        },
-        popExitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Right,
-                animationSpec = tween(350)
-            )
-        }) {
-        composable(route = "splash") {
-            SplashScreen(navController)
+
+/* ---------- AUTH GRAPH ---------- */
+
+fun NavGraphBuilder.authGraph(navController: NavController) {
+        composable(route = Routes.SPLASH) {
+            val authViewModel: AuthViewModel = hiltViewModel()
+            SplashScreen(navController, authViewModel, onNavigateToHome = {
+                navController.navigate(route = Routes.HOME) {
+                    popUpTo(0)    // ⬅️ clears ALL previous destinations
+                    launchSingleTop = true
+                }
+            },
+                onNavigateToLogin = {
+                    navController.navigate(route = Routes.LOGIN) {
+                    popUpTo(0)    // ⬅️ clears ALL previous destinations
+                    launchSingleTop = true
+                }})
         }
-        composable(route = "login") {
+        composable(route = Routes.LOGIN) {
             val authViewModel: AuthViewModel = hiltViewModel()
             LoginScreen(
                 authViewModel = authViewModel,
-                onNavigateToSignup = { navController.navigate(route = "register") },
-                onNavigateToForgotPassword = { navController.navigate(route = "ForgotPassword") },
-                onNavigateToHomeScreen = { name ->
-                    navController.navigate(route = "Home/$name") {
+                onNavigateToSignup = { navController.navigate(route = Routes.REGISTER) },
+                onNavigateToForgotPassword = { navController.navigate(route = Routes.FORGOT_PASSWORD) },
+                onNavigateToHomeScreen = { email ->
+                    navController.navigate(route = "home_screen/$email") {
                         popUpTo(0)    // ⬅️ clears ALL previous destinations
                         launchSingleTop = true
                     }
@@ -62,13 +46,13 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
 
             )
         }
-        composable(route = "register") {
+        composable(route = Routes.REGISTER) {
             val authViewModel: AuthViewModel = hiltViewModel()
             RegisterScreen(
                 authViewModel = authViewModel,
                 onNavigateBack = { navController.navigateUp() },
-                onNavigateToHomeScreen = { name ->
-                    navController.navigate(route = "Home/$name") {
+                onNavigateToHomeScreen = { email ->
+                    navController.navigate(route = "home_screen/$email") {
                         popUpTo(0)    // ⬅️ clears ALL previous destinations
                         launchSingleTop = true
                     }
@@ -76,7 +60,7 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
             )
         }
 
-        composable(route = "ForgotPassword") {
+        composable(route = Routes.FORGOT_PASSWORD) {
             val authViewModel: AuthViewModel = hiltViewModel()
             ForgotPasswordScreen(
                 authViewModel = authViewModel,
@@ -100,7 +84,7 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
                 authViewModel = authViewModel,
                 onBackButtonClick = { navController.popBackStack() },
                 onChangePasswordUseCase = {
-                    navController.navigate(route = "login") {
+                    navController.navigate(route = Routes.LOGIN) {
                         popUpTo(0)    // ⬅️ clears ALL previous destinations
                         launchSingleTop = true
                     }
@@ -108,12 +92,4 @@ fun AuthNavGraph(navController: NavHostController = rememberNavController()) {
                 email = email
             )
         }
-        composable(route = "Home/{name}") { backStackEntry ->
-            val name = backStackEntry.arguments?.getString("name") ?: ""
-            val authViewModel: AuthViewModel = hiltViewModel()
-            HomeScreen(authViewModel = authViewModel, name = name)
-        }
-    }
-
-
 }

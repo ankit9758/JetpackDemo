@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
@@ -35,7 +34,6 @@ import com.example.jetpackdemo.R
 import com.example.jetpackdemo.presentation.auth.AuthUiState
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
-import com.example.jetpackdemo.utils.CustomAlertDialog
 import com.example.jetpackdemo.utils.CustomButton
 import com.example.jetpackdemo.utils.LoadingOverlay
 import com.example.jetpackdemo.utils.OutLineEditText
@@ -64,7 +62,7 @@ fun LoginScreen(
             when (state) {
                 is AuthUiState.Success -> {
                     isLoading=false
-                    onNavigateToHomeScreen("ankit")
+                    onNavigateToHomeScreen(email)
                 }
 
                 is AuthUiState.Error -> {

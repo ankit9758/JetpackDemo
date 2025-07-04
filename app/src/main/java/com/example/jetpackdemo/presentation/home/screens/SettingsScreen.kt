@@ -1,0 +1,176 @@
+package com.example.jetpackdemo.presentation.home.screens
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.jetpackdemo.R
+import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
+import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
+import com.example.jetpackdemo.utils.LogoutDialog
+
+@Composable
+fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,onLogoutConfirm: () -> Unit) {
+    var showLogout by remember { mutableStateOf(false) }
+
+    /* --- local state for the Push‑Notification switch --- */
+    var pushEnabled by remember { mutableStateOf(true) }
+    JetpackDemoTheme {
+        Scaffold() { innerPad ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPad)
+                    .padding(horizontal = 20.dp)
+            ) {
+                /* ---------- profile card ---------- */
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        /* avatar */
+                        Image(
+                            painter = painterResource(R.drawable.avatar),
+                            contentDescription = "avatar",
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f)),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Spacer(Modifier.width(12.dp))
+
+                        Column(Modifier.weight(1f)) {
+                            Text("Welcome", style = MaterialTheme.typography.labelMedium)
+                            Text("Mr. John Doe", style = MaterialTheme.typography.titleMedium)
+                        }
+
+                        IconButton(onClick = {
+                            showLogout =true
+                        }) {
+                            Icon(Icons.Filled.ExitToApp, contentDescription = "share")
+                        }
+                    }
+                    HorizontalDivider(Modifier.padding(vertical = 16.dp))
+                }
+                /* ---------- normal list items ---------- */
+                item { SettingsRow(Icons.Filled.Person, "User Profile", { }) }
+                item { SettingsRow(Icons.Filled.Lock, "Change Password", { }) }
+                item { SettingsRow(Icons.Outlined.Info, "FAQs", { }) }
+                /* ---------- switch row ---------- */
+                item {
+                    SettingsRow(
+                        leading = { Icon(Icons.Filled.Notifications, null) },
+                        title = "Push Notification",
+                        trailing = {
+                            Switch(
+                                checked = pushEnabled,
+                                onCheckedChange = { pushEnabled = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedTrackColor = Color(0xFF21CBF3)
+                                )
+                            )
+                        }
+                    )
+                }
+                /* ---------- footer card ---------- */
+                item {
+                    Spacer(Modifier.height(24.dp))
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8F9)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                "If you have any other query you\ncan reach out to us.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                "WhatsApp Us",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    textDecoration = TextDecoration.Underline,
+                                    color = MaterialTheme.colorScheme.primary
+                                ),
+                                modifier = Modifier.clickable(onClick = { })
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(32.dp))
+
+                }
+            }
+
+            if (showLogout) {
+                LogoutDialog(
+                    icon = Icons.Filled.ExitToApp,
+                    title = stringResource(R.string.logout),
+                    message = stringResource(R.string.sure_logout),
+                    yesText = stringResource(R.string.yes),
+                    noText = stringResource(R.string.no),
+                    onClose = {
+                        showLogout = false
+                    },
+                    onConfirm = {
+                       showLogout =false
+                       onLogoutConfirm()
+                    }
+                )
+            }
+        }
+    }
+}
