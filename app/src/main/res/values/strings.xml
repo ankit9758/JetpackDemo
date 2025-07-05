@@ -4,6 +4,7 @@
     <string name="recover_password">Recover Password</string>
     <string name="verify_proceed">Verify and Proceed</string>
     <string name="get_code">Get Your Code </string>
+    <string name="update_profile">Update Profile</string>">
     <string name="register">Register</string>
     <string name="resend">Resend</string>
     <string name="email_hint">Enter your email</string>
@@ -17,6 +18,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="reset_password">Reset Password</string>
+    <string name="edit_profile">Edit Profile</string>
     <string name="yes">YES </string>
     <string name="no">NO </string>
     <string name="logout">Logout ? </string>

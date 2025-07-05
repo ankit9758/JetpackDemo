@@ -20,6 +20,8 @@ fun OutLineEditText(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction =ImeAction.Next,
     maxLength: Int? = null  ,
+    isEditable: Boolean = true  ,
+
     trailingIcon: @Composable (() -> Unit)? = null,
     startIcon: @Composable (() -> Unit)? = null
 ) {
@@ -38,6 +40,7 @@ fun OutLineEditText(
         textStyle =MaterialTheme.typography.titleMedium,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         visualTransformation = visualTransformation,
+        enabled = isEditable,
         trailingIcon = trailingIcon, leadingIcon = startIcon
 
     )

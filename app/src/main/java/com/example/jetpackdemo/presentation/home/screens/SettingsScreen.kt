@@ -1,5 +1,6 @@
 package com.example.jetpackdemo.presentation.home.screens
 
+import android.provider.ContactsContract.Profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,7 +58,7 @@ import com.example.jetpackdemo.utils.LogoutDialog
 import com.example.jetpackdemo.utils.UserPreferences
 
 @Composable
-fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,onLogoutConfirm: () -> Unit) {
+fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,onLogoutConfirm: () -> Unit,onEditProfileClick: () -> Unit) {
     val ctx = LocalContext.current
     val profileFlow = remember { UserPreferences(ctx).getProfile() }
     // collect → Compose State
@@ -111,7 +112,7 @@ fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,
                     HorizontalDivider(Modifier.padding(vertical = 16.dp))
                 }
                 /* ---------- normal list items ---------- */
-                item { SettingsRow(Icons.Default.Edit, "Edit Profile", { }) }
+                item { SettingsRow(Icons.Default.Edit, "Edit Profile", { onEditProfileClick()}) }
                 item { SettingsRow(Icons.Filled.Lock, "Change Password", { }) }
                 item { SettingsRow(Icons.Outlined.Info, "FAQs", { }) }
                 /* ---------- switch row ---------- */

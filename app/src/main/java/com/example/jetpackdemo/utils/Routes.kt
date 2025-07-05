@@ -16,4 +16,5 @@ object Routes {
 
     // Home‑graph destinations
     const val HOME    = "home_screen/{email}"
+    const val EDIT_PROFILE    = "edit_profile"
 }

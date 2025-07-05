@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -29,8 +30,8 @@ fun BackToolbar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(WindowInsets.systemBars.asPaddingValues())
-            .padding(horizontal = 20.dp, vertical = 30.dp),
+           // .padding(WindowInsets.navigationBars.asPaddingValues())
+            .padding(horizontal = 20.dp, vertical = 20.dp),
 
 
         ) {
