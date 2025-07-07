@@ -22,6 +22,9 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
             }
         },onEditProfileClick = {
             navController.navigate(route=Routes.EDIT_PROFILE)
+        }, onChangePasswordClick = {
+            navController.navigate("ChangePassword/$it/${true}"){
+            }
         })
     }
     composable(route = Routes.EDIT_PROFILE) { backStackEntry ->

@@ -4,7 +4,9 @@ package com.example.jetpackdemo.presentation.navigation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.jetpackdemo.presentation.auth.screens.ChangePasswordScreen
 import com.example.jetpackdemo.presentation.auth.screens.ForgotPasswordScreen
 import com.example.jetpackdemo.presentation.auth.screens.LoginScreen
@@ -73,12 +75,17 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
             VerifyEmailByOtpScreen(
                 authViewModel = authViewModel,
                 onBackButtonClick = { navController.popBackStack() },
-                onNavigateToChangePassword = { navController.navigate(route = "ChangePassword/$email") },
+                onNavigateToChangePassword = { navController.navigate(route = "ChangePassword/$email/false") },
                 email = email
             )
         }
-        composable(route = "ChangePassword/{email}") { backStackEntry ->
+        composable(route = "ChangePassword/{email}/{isFromHomeScreen}",
+           arguments = listOf(
+            navArgument("email")      { type = NavType.StringType },
+            navArgument("isFromHomeScreen")  { type = NavType.BoolType }
+        )) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
+            val isFromHomeScreen = backStackEntry.arguments?.getBoolean("isFromHomeScreen") ?: false
             val authViewModel: AuthViewModel = hiltViewModel()
             ChangePasswordScreen(
                 authViewModel = authViewModel,
@@ -89,7 +96,7 @@ fun NavGraphBuilder.authGraph(navController: NavController) {
                         launchSingleTop = true
                     }
                 },
-                email = email
+                email = email, isFromHomeScreen = isFromHomeScreen
             )
         }
 }

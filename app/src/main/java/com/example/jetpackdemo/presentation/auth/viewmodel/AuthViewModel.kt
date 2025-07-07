@@ -60,10 +60,16 @@ class AuthViewModel @Inject constructor(
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.password_error))
             } else {
                 _uiState.emit( AuthUiState.Loading)
+                delay(1000)
                 val result = loginUseCase.invoke(email, password)
                 if (result != null) {
+                    if(result.password==password){
                         saveUserData(result)
-                    _uiState.emit(AuthUiState.Success)
+                        _uiState.emit(AuthUiState.Success)
+                    }else{
+                        _uiState.emit(AuthUiState.ErrorWithId(R.string.enter_correct_password))
+                    }
+
                 } else {
                     _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_credential_error))
                 }
@@ -164,8 +170,8 @@ class AuthViewModel @Inject constructor(
 
     fun findUserDetailByEmail(email: String) {
         viewModelScope.launch {
-            _uiState.emit( AuthUiState.Loading)
-            delay(2000)
+            _uiState.emit(AuthUiState.Loading)
+            delay(500)
             val result = forgotPasswordUseCase.invoke(email)
             if (result != null) {
                 _uiState.emit(AuthUiState.Result(result))

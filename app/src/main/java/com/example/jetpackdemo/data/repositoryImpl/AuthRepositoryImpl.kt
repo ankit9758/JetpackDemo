@@ -1,5 +1,6 @@
 package com.example.jetpackdemo.data.repositoryImpl
 
+import androidx.compose.ui.text.toLowerCase
 import com.example.jetpackdemo.data.local.dao.UserDao
 import com.example.jetpackdemo.data.local.entity.toEntity
 import com.example.jetpackdemo.data.local.entity.toUser
@@ -16,7 +17,7 @@ class AuthRepositoryImpl @Inject constructor(private val userDao: UserDao) : Aut
     }
 
     override suspend fun findByEmail(email: String,password:String): User? {
-      return userDao.findByEmail(email)?.toUser()
+      return userDao.findByEmail(email=email)?.toUser()
     }
 
     override suspend fun updateUserPassword(email: String, password: String): Boolean {

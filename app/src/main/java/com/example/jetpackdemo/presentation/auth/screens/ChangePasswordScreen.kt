@@ -1,5 +1,6 @@
 package com.example.jetpackdemo.presentation.auth.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +54,7 @@ import com.example.jetpackdemo.utils.Utility
 
 @Composable
 fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackButtonClick: () -> Unit,onChangePasswordUseCase: () -> Unit,
-                         email: String){
+                         email: String,isFromHomeScreen:Boolean=false){
 
     val context = LocalContext.current
     var password by remember { mutableStateOf("") }
@@ -65,30 +66,30 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
     var isLoading by remember { mutableStateOf(false) }
     var showSuccess by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
+    var errorMsg by remember { mutableStateOf("") }
 
 
 
     LaunchedEffect(Unit) {
-        authViewModel.findUserDetailByEmail(email)
+
         authViewModel.uiState.collect { state ->
             when (state) {
                 is AuthUiState.Success -> {
                     isLoading = false
                     showSuccess =true
-//                    Utility.showToast(context, context.getString(R.string.password_change_success))
 
                 }
 
                 is AuthUiState.Error -> {
                     isLoading = false
                     showError = true
-                    Utility.showToast(context, (state).message)
+                    errorMsg =state.message
                 }
 
                 is AuthUiState.ErrorWithId -> {
                     isLoading = false
                     showError = true
-                  //  Utility.showToast(context, context.getString(state.id))
+                    errorMsg =context.getString(state.id)
                 }
 
                 is AuthUiState.Loading -> {
@@ -108,7 +109,7 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
             }
         }
     }
-
+    LaunchedEffect (email){  authViewModel.findUserDetailByEmail(email) }
 
     JetpackDemoTheme {
         Box(
@@ -129,7 +130,7 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
                     .fillMaxSize()
             ) {
                 BackToolbar(
-                    title = stringResource(id = R.string.reset_password),
+                    title = stringResource(id = if(isFromHomeScreen)R.string.change_password else R.string.reset_password),
                     onBackClick = { onBackButtonClick() }
                 )
                 Card(
@@ -239,16 +240,25 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
         if (showSuccess) {
             CustomAlertDialog(
                 icon = Icons.Default.CheckCircle,
-                title = context.getString(R.string.reset_password),
+                title = context.getString(if (isFromHomeScreen) R.string.change_password else R.string.reset_password),
                 message = context.getString(R.string.password_change_success),
                 isSuccess = true,
                 onClose = {
                     showSuccess = false
-                    onChangePasswordUseCase()
+                    if(!isFromHomeScreen){
+                        onChangePasswordUseCase()
+                    }else{
+                        onBackButtonClick()
+                    }
+
                 },
                 onConfirm = {
                     showSuccess = false
-                    onChangePasswordUseCase()
+                    if(!isFromHomeScreen){
+                        onChangePasswordUseCase()
+                    }else{
+                        onBackButtonClick()
+                    }
                 }
             )
         }
@@ -256,7 +266,7 @@ fun ChangePasswordScreen(authViewModel: AuthViewModel = hiltViewModel(),onBackBu
             CustomAlertDialog(
                 icon = Icons.Default.Close,
                 title = "Error",
-                message = "Something went wrong. Please try again.",
+                message = errorMsg,
                 isSuccess = false,
                 confirmText = "Retry",
                 onClose = {

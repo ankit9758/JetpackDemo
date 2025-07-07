@@ -41,7 +41,7 @@ import com.example.jetpackdemo.utils.Routes
 @Composable
 fun MainHomeScreen(
     email: String,
-    onLogoutNavigate: () -> Unit,onEditProfileClick: () -> Unit
+    onLogoutNavigate: () -> Unit,onEditProfileClick: () -> Unit,onChangePasswordClick: (String) -> Unit
 ) {
     val nav = rememberNavController()
 
@@ -153,6 +153,9 @@ fun MainHomeScreen(
                         },
                         onEditProfileClick = {
                            onEditProfileClick()
+                        },
+                        onChangePasswordClick = {email->
+                            onChangePasswordClick(email)
                         }
                     )
                 }

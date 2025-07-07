@@ -162,7 +162,7 @@ fun EditProfileScreen(
             )
             cameraLauncher.launch(tempCameraUri!!)
         } else {
-            // TODO show rationale/snackbar
+            Utility.showToast(ctx,"CAMERA permission denied")
             Log.d("EditProfileScreen", "CAMERA permission denied")
         }
     }

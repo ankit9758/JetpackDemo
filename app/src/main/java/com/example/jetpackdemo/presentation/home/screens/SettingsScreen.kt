@@ -63,7 +63,13 @@ import com.example.jetpackdemo.utils.LogoutDialog
 import com.example.jetpackdemo.utils.UserPreferences
 
 @Composable
-fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:String, onLogoutConfirm: () -> Unit, onEditProfileClick: () -> Unit) {
+fun SettingsScreen(
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    email: String,
+    onLogoutConfirm: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onChangePasswordClick: (String) -> Unit
+) {
     val ctx = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -74,8 +80,7 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
 //    // collect → Compose State
 //    val profile by profileFlow.collectAsState(initial = null)
 
-    var showLogout by remember { mutableStateOf(false) }
-    /* --- local state for the Push‑Notification switch --- */
+    var showLogout by remember { mutableStateOf(false) }/* --- local state for the Push‑Notification switch --- */
     var pushEnabled by remember { mutableStateOf(true) }
     // Runs EVERY TIME screen becomes active again
 
@@ -110,8 +115,7 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
                                 .data(profile?.imageUrl ?: R.drawable.avatar)
                                 .placeholder(R.drawable.avatar)
                                 .error(R.drawable.avatar) // Represents an error or fallback state
-                                .crossfade(true)
-                                .build(),
+                                .crossfade(true).build(),
                             contentDescription = "avatar",
                             modifier = Modifier
                                 .size(56.dp)
@@ -124,22 +128,35 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
 
                         Column(Modifier.weight(1f)) {
                             Text("Welcome", style = MaterialTheme.typography.labelMedium)
-                            Text("Mr. ${profile?.username}", style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                "Mr. ${profile?.username}",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                         }
 
                         IconButton(onClick = {
-                            showLogout =true
+                            showLogout = true
                         }) {
                             Icon(Icons.Filled.ExitToApp, contentDescription = "share")
                         }
                     }
                     HorizontalDivider(Modifier.padding(vertical = 16.dp))
+                }/* ---------- normal list items ---------- */
+                item { SettingsRow(Icons.Default.Edit, "Edit Profile", { onEditProfileClick() }) }
+                item {
+                    SettingsRow(
+                        Icons.Filled.Lock,
+                        "Change Password",
+                        { onChangePasswordClick(profile?.email ?: "") })
                 }
-                /* ---------- normal list items ---------- */
-                item { SettingsRow(Icons.Default.Edit, "Edit Profile", { onEditProfileClick()}) }
-                item { SettingsRow(Icons.Filled.Lock, "Change Password", { }) }
-                item { SettingsRow(Icons.Outlined.Info, "FAQs", { }) }
-                /* ---------- switch row ---------- */
+                item {
+                    SettingsRow(
+                        Icons.Outlined.Info,
+                        "FAQs",
+                        {
+
+                        })
+                }/* ---------- switch row ---------- */
                 item {
                     SettingsRow(
                         leading = { Icon(Icons.Filled.Notifications, null) },
@@ -152,10 +169,8 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
                                     checkedTrackColor = Color(0xFF21CBF3)
                                 )
                             )
-                        }
-                    )
-                }
-                /* ---------- footer card ---------- */
+                        })
+                }/* ---------- footer card ---------- */
                 item {
                     Spacer(Modifier.height(24.dp))
                     Card(
@@ -164,7 +179,9 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxWidth().padding(20.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
@@ -174,13 +191,11 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
                             )
                             Spacer(Modifier.height(8.dp))
                             Text(
-                                "WhatsApp Us",
-                                style = MaterialTheme.typography.bodyMedium.copy(
+                                "WhatsApp Us", style = MaterialTheme.typography.bodyMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     textDecoration = TextDecoration.Underline,
                                     color = MaterialTheme.colorScheme.primary
-                                ),
-                                modifier = Modifier.clickable(onClick = { })
+                                ), modifier = Modifier.clickable(onClick = { })
                             )
                         }
                     }
@@ -200,10 +215,9 @@ fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:S
                         showLogout = false
                     },
                     onConfirm = {
-                       showLogout =false
-                       onLogoutConfirm()
-                    }
-                )
+                        showLogout = false
+                        onLogoutConfirm()
+                    })
             }
         }
     }
