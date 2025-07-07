@@ -8,4 +8,5 @@ interface AuthRepository {
     suspend fun findByEmail(email:String,password:String):User?
     suspend fun updateUserPassword(email:String,password:String):Boolean
     fun getAllUser():Flow<List<User>>
+    suspend fun updateUserProfile(username:String,imageUrl:String,phoneNumber: String,email: String):User?
 }

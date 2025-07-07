@@ -1,6 +1,5 @@
 package com.example.jetpackdemo.presentation.auth
 
-import com.example.jetpackdemo.domain.model.User
 
 sealed class AuthUiState {
     object Idle : AuthUiState()

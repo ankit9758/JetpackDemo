@@ -26,4 +26,14 @@ class AuthRepositoryImpl @Inject constructor(private val userDao: UserDao) : Aut
     override fun getAllUser(): Flow<List<User>> {
        return userDao.getAllUser().map { it.map { userEntity -> userEntity.toUser() } }
     }
+
+    override suspend fun updateUserProfile(
+        username: String,
+        imageUrl: String,
+        phoneNumber: String,
+        email: String
+    ): User? {
+        val updated = userDao.updateProfileData(username, imageUrl, phoneNumber, email)
+        return if (updated > 0) userDao.findByEmail(email)?.toUser() else null
+    }
 }

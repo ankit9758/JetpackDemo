@@ -10,6 +10,7 @@ import com.example.jetpackdemo.domain.repository.AuthRepository
 import com.example.jetpackdemo.domain.usecase.ChangePasswordUseCase
 import com.example.jetpackdemo.domain.usecase.ForgotPasswordUseCase
 import com.example.jetpackdemo.domain.usecase.LoginUseCase
+import com.example.jetpackdemo.domain.usecase.ProfileUseCase
 import com.example.jetpackdemo.domain.usecase.RegisterUseCase
 import com.example.jetpackdemo.utils.UserPreferences
 import dagger.Module
@@ -61,6 +62,11 @@ object AppModule {
     @Singleton
     fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
         return UserPreferences(context)
+    }
+
+    @Provides
+    fun provideProfileUseCase(authRepository: AuthRepository): ProfileUseCase {
+        return ProfileUseCase(authRepository)
     }
 
 }

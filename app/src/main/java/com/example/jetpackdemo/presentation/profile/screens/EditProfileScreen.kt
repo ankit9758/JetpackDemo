@@ -54,6 +54,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -62,6 +63,9 @@ import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.example.jetpackdemo.R
+import com.example.jetpackdemo.domain.model.User
+import com.example.jetpackdemo.presentation.profile.ProfileUiState
+import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.utils.BackToolbar
 import com.example.jetpackdemo.utils.CustomButton
@@ -69,12 +73,16 @@ import com.example.jetpackdemo.utils.ImagePickerBottomSheet
 import com.example.jetpackdemo.utils.LoadingOverlay
 import com.example.jetpackdemo.utils.OutLineEditText
 import com.example.jetpackdemo.utils.UserPreferences
+import com.example.jetpackdemo.utils.Utility
 import java.io.File
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreen(onBackButtonClick: () -> Unit) {
+fun EditProfileScreen(
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    onBackButtonClick: () -> Unit
+) {
     val ctx = LocalContext.current
     val profileFlow = remember { UserPreferences(ctx).getProfile() }
     // collect → Compose State
@@ -87,6 +95,7 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isEditable by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
     var showSheet by remember { mutableStateOf(false) }
@@ -146,7 +155,7 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit) {
     ) { granted ->
         if (granted) {
             val img = File(ctx.cacheDir, "cam_${UUID.randomUUID()}.jpg")
-            tempCameraUri= FileProvider.getUriForFile(
+            tempCameraUri = FileProvider.getUriForFile(
                 ctx,
                 "${ctx.packageName}.provider",
                 img
@@ -159,21 +168,45 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit) {
     }
 
 
-
-
-
-
     LaunchedEffect(Unit) {
         profile?.let {
+            imageUriPath =it.imageUrl
             name = it.username
             email = it.email
             mobileNumber = it.phoneNumber
             password = it.password
         }
-    }
+        profileViewModel.uiStateProfile.collect { state ->
+            when (state) {
 
-    /** <- NEW: flag that drives the progress bar */
-    var isLoading by remember { mutableStateOf(false) }
+                is ProfileUiState.Error -> {
+                    isLoading = false
+                    Utility.showToast(ctx, (state).message)
+
+
+                }
+
+                is ProfileUiState.ErrorWithId -> {
+                    isLoading = false
+                    Utility.showToast(ctx, ctx.getString(state.id))
+                }
+
+               is  ProfileUiState.Loading -> {
+                    isLoading = true
+                }
+                is ProfileUiState.Result<*> -> {
+                    isLoading = false
+                    val user = state.data as? User
+                    user?.let {
+                        profileViewModel.saveUserData(it)
+                    }
+                    Utility.showToast(ctx, "Your Profile Updated Successfully.")
+                    onBackButtonClick()
+                }
+
+            }
+        }
+    }
 
 
     JetpackDemoTheme {
@@ -211,17 +244,17 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit) {
                         modifier = Modifier.size(120.dp),
                     )
                     {
-                    /*    AsyncImage(
-                            model = ImageRequest.Builder(ctx)
-                                .data(imageUriPath ?: R.drawable.avatar)
-                                .placeholder(R.drawable.avatar)
-                                .error(R.drawable.ic_camera) // Represents an error or fallback state
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "Profile",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )*/
+                        /*    AsyncImage(
+                                model = ImageRequest.Builder(ctx)
+                                    .data(imageUriPath ?: R.drawable.avatar)
+                                    .placeholder(R.drawable.avatar)
+                                    .error(R.drawable.ic_camera) // Represents an error or fallback state
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = "Profile",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )*/
                         // ------------ Image ------------
                         Image(
                             painter = painter,
@@ -243,6 +276,7 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit) {
                     IconButton(
                         onClick = {
                             showSheet = true
+                            isEditable =true
                         },
                         modifier = Modifier
                             .offset(x = (-2).dp, y = (-2).dp)
@@ -374,7 +408,7 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit) {
                             text = stringResource(R.string.update_profile),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                isEditable = !isEditable
+                                profileViewModel.updateUserProfile(userName = name, phoneNumber = mobileNumber, imageUrl = imageUriPath.toString(),email=email)
                             })
                     }
                 }

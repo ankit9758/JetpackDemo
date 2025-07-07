@@ -34,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.presentation.home.model.bottomItems
+import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.utils.Routes
 
@@ -143,8 +144,9 @@ fun MainHomeScreen(
                 composable(route = Routes.TAB_SEARCH_SCREEN) { SearchScreen() }
                 composable(route = Routes.TAB_PROFILE_SCREEN) { ProfileScreen() }
                 composable(route = Routes.TAB_SETTING_SCREEN) {
+                    val profileViewModel: ProfileViewModel = hiltViewModel()
                     val authViewModel: AuthViewModel = hiltViewModel()
-                    SettingsScreen( authViewModel,email,
+                    SettingsScreen( profileViewModel,email,
                         onLogoutConfirm = {
                             authViewModel.logout()
                             onLogoutNavigate()

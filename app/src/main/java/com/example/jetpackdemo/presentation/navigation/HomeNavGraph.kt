@@ -1,11 +1,14 @@
 package com.example.jetpackdemo.presentation.navigation
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.presentation.home.screens.MainHomeScreen
 import com.example.jetpackdemo.presentation.profile.screens.EditProfileScreen
+import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.utils.Routes
 
 //---------- HOME GRAPH ----------
@@ -22,6 +25,7 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
         })
     }
     composable(route = Routes.EDIT_PROFILE) { backStackEntry ->
-        EditProfileScreen(onBackButtonClick = { navController.popBackStack() })
+        val profileViewModel: ProfileViewModel = hiltViewModel()
+        EditProfileScreen(profileViewModel,onBackButtonClick = { navController.popBackStack() })
     }
 }

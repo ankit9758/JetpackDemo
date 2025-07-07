@@ -22,6 +22,6 @@ interface UserDao {
     @Query("UPDATE user_table SET password = :password WHERE email = :email")
     suspend fun updateUserPassword(password: String,email: String):Int
 
-    @Query("UPDATE user_table SET username = :username, phoneNumber = :phoneNumber WHERE email = :email")
-    suspend fun updateProfileData(username: String,phoneNumber: String,email: String):Int
+    @Query("UPDATE user_table SET username = :username, imageUrl = :imageUrl,phoneNumber = :phoneNumber WHERE email = :email")
+    suspend fun updateProfileData(username: String,imageUrl: String,phoneNumber: String,email: String):Int
 }

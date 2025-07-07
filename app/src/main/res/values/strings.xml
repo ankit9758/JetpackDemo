@@ -45,6 +45,7 @@
     <string name="email_error">Please enter your Email.</string>
     <string name="name_error">Please enter your name.</string>
     <string name="phone_error">Please enter your phone number</string>
+    <string name="valid_phone_error">Please enter the valid 10 digit phone number.</string>
     <string name="valid_email">Please enter valid Email.</string>
     <string name="password_error">Please enter your Password.</string>
     <string name="confirm_password_error">Please enter confirm Password.</string>

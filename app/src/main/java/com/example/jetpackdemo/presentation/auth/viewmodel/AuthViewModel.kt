@@ -140,7 +140,7 @@ class AuthViewModel @Inject constructor(
             else {
                 _uiState.emit( AuthUiState.Loading)
                 delay(1500)
-                val user=User(email = email, password = password, username =name, phoneNumber = phoneNumber)
+                val user=User(email = email, password = password, username =name, phoneNumber = phoneNumber, imageUrl = "")
                 val result = registerUseCase.invoke(user)
                 if (result) {
                     saveUserData(user)

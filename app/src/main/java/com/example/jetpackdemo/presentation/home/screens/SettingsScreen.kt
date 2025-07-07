@@ -1,7 +1,6 @@
 package com.example.jetpackdemo.presentation.home.screens
 
-import android.provider.ContactsContract.Profile
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,29 +44,48 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.jetpackdemo.R
-import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
+import com.example.jetpackdemo.domain.model.User
+import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.utils.LogoutDialog
 import com.example.jetpackdemo.utils.UserPreferences
 
 @Composable
-fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,onLogoutConfirm: () -> Unit,onEditProfileClick: () -> Unit) {
+fun SettingsScreen(profileViewModel: ProfileViewModel = hiltViewModel(), email:String, onLogoutConfirm: () -> Unit, onEditProfileClick: () -> Unit) {
     val ctx = LocalContext.current
-    val profileFlow = remember { UserPreferences(ctx).getProfile() }
-    // collect → Compose State
-    val profile by profileFlow.collectAsState(initial = null)
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var profile by remember { mutableStateOf<User?>(null) } // Replace `ProfileModel` with your actual data class name
+    val prefs = remember { UserPreferences(ctx) }
+
+//    var profileFlow = remember { UserPreferences(ctx).getProfile() }
+//    // collect → Compose State
+//    val profile by profileFlow.collectAsState(initial = null)
 
     var showLogout by remember { mutableStateOf(false) }
     /* --- local state for the Push‑Notification switch --- */
     var pushEnabled by remember { mutableStateOf(true) }
+    // Runs EVERY TIME screen becomes active again
+
+    LaunchedEffect(Unit) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            prefs.getProfile().collect { profile = it }
+        }
+    }
+
+
 
 
     JetpackDemoTheme {
@@ -86,8 +105,13 @@ fun SettingsScreen(authViewModel: AuthViewModel = hiltViewModel(), email:String,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         /* avatar */
-                        Image(
-                            painter = painterResource(R.drawable.avatar),
+                        AsyncImage(
+                            model = ImageRequest.Builder(ctx)
+                                .data(profile?.imageUrl ?: R.drawable.avatar)
+                                .placeholder(R.drawable.avatar)
+                                .error(R.drawable.avatar) // Represents an error or fallback state
+                                .crossfade(true)
+                                .build(),
                             contentDescription = "avatar",
                             modifier = Modifier
                                 .size(56.dp)

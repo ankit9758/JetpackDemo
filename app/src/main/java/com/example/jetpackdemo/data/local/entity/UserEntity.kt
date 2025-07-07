@@ -11,13 +11,14 @@ data class UserEntity(
     val username: String,
     val email: String,
     val password: String,
-    val phoneNumber: String
+    val phoneNumber: String,
+    val imageUrl: String
 )
 
 fun UserEntity.toUser(): User {
-    return User(username = username, email = email, password = password, phoneNumber = phoneNumber)
+    return User(username = username, email = email, password = password, phoneNumber = phoneNumber,imageUrl=imageUrl)
 }
 
 fun User.toEntity(): UserEntity {
-    return UserEntity(username = username, email = email, password = password,phoneNumber=phoneNumber)
+    return UserEntity(username = username, email = email, password = password,phoneNumber=phoneNumber,imageUrl=imageUrl)
 }
