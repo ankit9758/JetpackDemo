@@ -13,6 +13,9 @@ hiltNavigation = "1.1.0"
 composeBom = "2024.09.00"
 datastore = "1.0.0"
 gson = "2.10.1"
+coil = "2.4.0"
+cropper = "4.6.0"
+
 nav_compose = "2.9.1"# July 2 2025 release with built‑in anims :contentReference[oaicite:1]{index=1}
 
 
@@ -33,6 +36,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "cropper" }
+
 
 
 # Hilt

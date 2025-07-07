@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.androidx.nav.compose)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.gson)
+    implementation(libs.coil.compose)
+    implementation(libs.image.cropper)
+
 
 
 

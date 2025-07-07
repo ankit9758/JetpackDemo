@@ -1,5 +1,10 @@
 package com.example.jetpackdemo.presentation.profile.screens
 
+import android.Manifest
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,42 +29,58 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.example.jetpackdemo.R
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.utils.BackToolbar
 import com.example.jetpackdemo.utils.CustomButton
+import com.example.jetpackdemo.utils.ImagePickerBottomSheet
 import com.example.jetpackdemo.utils.LoadingOverlay
 import com.example.jetpackdemo.utils.OutLineEditText
 import com.example.jetpackdemo.utils.UserPreferences
+import java.io.File
+import java.util.UUID
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreen(onBackButtonClick: () -> Unit){
+fun EditProfileScreen(onBackButtonClick: () -> Unit) {
     val ctx = LocalContext.current
     val profileFlow = remember { UserPreferences(ctx).getProfile() }
     // collect → Compose State
     val profile by profileFlow.collectAsState(initial = null)
 
+    var imageUriPath by rememberSaveable { mutableStateOf<String?>(null) } // To persist across config changes if desired for URI
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var mobileNumber by remember { mutableStateOf("") }
@@ -68,6 +89,80 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit){
     var isEditable by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
+    var showSheet by remember { mutableStateOf(false) }
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Coil painter so we can inspect the state
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUriPath)                 // <-- File on disk
+            .placeholder(R.drawable.avatar)
+            .error(R.drawable.avatar)
+            .crossfade(true)        // 250 ms by default
+            .build()
+    )
+
+    val state = painter.state
+
+    /* ---------- Cropper launcher ---------- */
+    val cropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            // The URI from the cropper
+            val croppedUri = result.uriContent
+            imageUriPath = croppedUri.toString()
+            Log.d("EditProfileScreen", "Cropped Image Path: $imageUriPath")
+        }
+    }
+
+    fun launchCrop(input: Uri) {
+        val opts = CropImageOptions().apply {
+            cropShape = CropImageView.CropShape.OVAL
+            aspectRatioX = 1; aspectRatioY = 1
+            fixAspectRatio = true
+            outputCompressQuality = 70
+        }
+        cropLauncher.launch(CropImageContractOptions(uri = input, cropImageOptions = opts))
+    }
+
+    /* ---- Gallery ---- */
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri -> uri?.let { launchCrop(it) } }
+
+    /* ---- Camera ---- */
+
+    // Camera Launcher (Basic example, needs permission handling)
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success: Boolean ->
+        if (success) {
+            tempCameraUri?.let { launchCrop(it) }
+        }
+    }
+    /* ---- Permission launcher ---- */
+    val camPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            val img = File(ctx.cacheDir, "cam_${UUID.randomUUID()}.jpg")
+            tempCameraUri= FileProvider.getUriForFile(
+                ctx,
+                "${ctx.packageName}.provider",
+                img
+            )
+            cameraLauncher.launch(tempCameraUri!!)
+        } else {
+            // TODO show rationale/snackbar
+            Log.d("EditProfileScreen", "CAMERA permission denied")
+        }
+    }
+
+
+
+
+
+
     LaunchedEffect(Unit) {
         profile?.let {
             name = it.username
@@ -103,65 +198,57 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit){
                     title = stringResource(id = R.string.edit_profile),
                     onBackClick = { onBackButtonClick() }
                 )
-              /*  Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .background(Color.LightGray)
-                        .align(Alignment.CenterHorizontally),
-                    contentAlignment = Alignment.BottomEnd
-                ){
-                    // Profile image (in circle)
-                    Image(
-                        painter = painterResource(R.drawable.avatar),
-                        contentDescription = "Profile Picture",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    // Small edit button
-                    IconButton(
-                        onClick = {  },
-                        modifier = Modifier.padding(4.dp)
-                            .size(50.dp)
-                           // .offset(x = 4.dp, y = 4.dp) // fine-tune position
-                            .background(
-                                color = Color.White,
-                                shape = CircleShape
-                            )
-                            .border(1.dp, Color.LightGray, CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = Color.Black,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }*/
 
-                Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.size(120.dp).align(Alignment.CenterHorizontally)) {
+                Box(
+                    contentAlignment = Alignment.BottomEnd,
+                    modifier = Modifier
+                        .size(120.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
                     Card(
                         shape = CircleShape,
                         elevation = CardDefaults.cardElevation(4.dp),
                         modifier = Modifier.size(120.dp),
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.avatar),
+                    )
+                    {
+                    /*    AsyncImage(
+                            model = ImageRequest.Builder(ctx)
+                                .data(imageUriPath ?: R.drawable.avatar)
+                                .placeholder(R.drawable.avatar)
+                                .error(R.drawable.ic_camera) // Represents an error or fallback state
+                                .crossfade(true)
+                                .build(),
                             contentDescription = "Profile",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )*/
+                        // ------------ Image ------------
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-
+                    // ------------ Optional loading animation ------------
+                    if (state is AsyncImagePainter.State.Loading) {
+                        // Simple infinite progress; swap for a shimmer if you like
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(32.dp)
+                        )
+                    }
                     IconButton(
-                        onClick = {  },
+                        onClick = {
+                            showSheet = true
+                        },
                         modifier = Modifier
                             .offset(x = (-2).dp, y = (-2).dp)
                             .size(24.dp)
                             .background(color = Color(0xFF4285F4), shape = CircleShape)
-                            .border(3.dp, Color.White, CircleShape)
+                            .border(2.dp, Color.White, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -287,13 +374,29 @@ fun EditProfileScreen(onBackButtonClick: () -> Unit){
                             text = stringResource(R.string.update_profile),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                isEditable =!isEditable
+                                isEditable = !isEditable
                             })
                     }
                 }
             }
 
             LoadingOverlay(isLoading)
+            if (showSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showSheet = false },
+                    sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+                ) {
+                    ImagePickerBottomSheet(
+                        onDismiss = { showSheet = false },
+                        onCameraClick = {
+                            camPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        },
+                        onGalleryClick = {
+                            galleryLauncher.launch("image/*")
+                        }
+                    )
+                }
+            }
         }
     }
 
