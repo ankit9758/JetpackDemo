@@ -16,6 +16,8 @@ gson = "2.10.1"
 coil = "2.4.0"
 cropper = "4.6.0"
 retrofit = "2.9.0"
+paging = "3.3.0"
+okhttp = "4.12.0" # or latest
 nav_compose = "2.9.1"# July 2 2025 release with built‑in anims :contentReference[oaicite:1]{index=1}
 
 
@@ -42,7 +44,12 @@ retrofit  = { group = "com.squareup.retrofit2", name = "retrofit",        versio
 retrofit-gson  = { group = "com.squareup.retrofit2", name = "converter-gson",     version.ref = "retrofit" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-animation = { module = "androidx.compose.animation:animation" }
-
+# pagging
+paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+# logging
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }

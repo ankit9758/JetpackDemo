@@ -1,7 +1,7 @@
 package com.example.jetpackdemo.data.repositoryImpl
 
 import com.example.jetpackdemo.data.mapper.toDomain
-import com.example.jetpackdemo.data.remote.ProductRemoteDataSource
+import com.example.jetpackdemo.data.remote.products.ProductRemoteDataSource
 import com.example.jetpackdemo.domain.model.Product
 import com.example.jetpackdemo.domain.repository.ProductRepository
 import javax.inject.Inject

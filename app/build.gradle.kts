@@ -70,6 +70,10 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.compose.foundation)
     implementation(libs.compose.animation)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
 
 

@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.presentation.home.model.bottomItems
+import com.example.jetpackdemo.presentation.home.viewmodel.PostViewModel
 import com.example.jetpackdemo.presentation.products.viewmodels.ProductViewModel
 import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
@@ -143,7 +144,10 @@ fun MainHomeScreen(
                     )
                 }
             ) {
-                composable(route = Routes.TAB_HOME_SCREEN) { HomeScreen() }
+                composable(route = Routes.TAB_HOME_SCREEN) {
+                  val postViewModel: PostViewModel = hiltViewModel()
+                    HomeScreen(postViewModel)
+                }
                 composable(route = Routes.TAB_SEARCH_SCREEN) { SearchScreen() }
                 composable(route = Routes.TAB_PRODUCTS_SCREEN) {
                     val productViewModel: ProductViewModel = hiltViewModel()

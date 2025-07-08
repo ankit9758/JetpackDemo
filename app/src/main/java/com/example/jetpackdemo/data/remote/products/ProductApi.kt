@@ -1,4 +1,4 @@
-package com.example.jetpackdemo.data.remote
+package com.example.jetpackdemo.data.remote.products
 
 import com.example.jetpackdemo.data.model.ProductDto
 import retrofit2.Response
