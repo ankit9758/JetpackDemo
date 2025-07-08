@@ -72,17 +72,17 @@ fun ProductsScreen(productViewModel: ProductViewModel = hiltViewModel()) {
             when (uiState) {
                 /* 1️⃣ INITIAL load: show spinner only when list is still empty */
                 is ProductUiState.Loading ->{
-                  //  if (!firstLoadDone) {
+                  /*  if (!firstLoadDone) {
+                        Box(Modifier.fillMaxSize(), Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }*/
+
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(6) {
                                 ProductShimmerItem()
                             }
                         }
-                   //     }
-//                        Box(Modifier.fillMaxSize(), Alignment.Center) {
-//                            CircularProgressIndicator()
-//                    }
-
                 }
                 /* 2️⃣ ERROR state */
                 is ProductUiState.Error -> {
