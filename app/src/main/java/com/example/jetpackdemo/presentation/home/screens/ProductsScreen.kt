@@ -1,12 +1,19 @@
 package com.example.jetpackdemo.presentation.home.screens
 
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -23,18 +30,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.jetpackdemo.presentation.products.screens.ProductItemRow
+import com.example.jetpackdemo.presentation.products.screens.ProductShimmerItem
 import com.example.jetpackdemo.presentation.products.state.ProductUiState
 import com.example.jetpackdemo.presentation.products.viewmodels.ProductViewModel
 import com.example.jetpackdemo.utils.NoDataFoundScreen
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsScreen(productViewModel: ProductViewModel = hiltViewModel()) {
 
     val uiState by productViewModel.uiState.collectAsState()
-
     /* first load only once */
-    LaunchedEffect(Unit) { productViewModel.load() }
+    LaunchedEffect(Unit) {
+        productViewModel.load()
+    }
 
     /* ── 3. remember if the first load has completed ── */
     var firstLoadDone by remember { mutableStateOf(false) }
@@ -62,11 +72,16 @@ fun ProductsScreen(productViewModel: ProductViewModel = hiltViewModel()) {
             when (uiState) {
                 /* 1️⃣ INITIAL load: show spinner only when list is still empty */
                 is ProductUiState.Loading ->{
-                    if (!firstLoadDone) {
-                        Box(Modifier.fillMaxSize(), Alignment.Center) {
-                            CircularProgressIndicator()
-                    }
-                }
+                  //  if (!firstLoadDone) {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(6) {
+                                ProductShimmerItem()
+                            }
+                        }
+                   //     }
+//                        Box(Modifier.fillMaxSize(), Alignment.Center) {
+//                            CircularProgressIndicator()
+//                    }
 
                 }
                 /* 2️⃣ ERROR state */
@@ -89,17 +104,31 @@ fun ProductsScreen(productViewModel: ProductViewModel = hiltViewModel()) {
                                 productViewModel.load()
                             })
                     } else {
+                        val listState = rememberLazyListState()
 
                         LazyColumn(
+                            state = listState,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(16.dp)
                         ) {
-                            items(items = list, key = { it.id }) { product ->
-                                ProductItemRow(
-                                    product,
-                                    onClick = {},
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                            itemsIndexed(list, key = { _, item -> item.id }) { index, product ->
+                                var visible by remember { mutableStateOf(false) }
+                                LaunchedEffect(Unit) {
+                                    delay(index * 200L) // Staggered animation
+                                    visible = true
+                                }
+
+                                AnimatedVisibility(
+                                    visible = visible,
+                                    enter = fadeIn() + slideInVertically(),
+                                    exit = fadeOut()+slideOutVertically()
+                                ) {
+                                    ProductItemRow(
+                                        product,
+                                        onClick = {},
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
                             }
                         }
                     }

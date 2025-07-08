@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.image.cropper)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.animation)
 
 
 

@@ -40,6 +40,8 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "cropper" }
 retrofit  = { group = "com.squareup.retrofit2", name = "retrofit",        version.ref = "retrofit" }
 retrofit-gson  = { group = "com.squareup.retrofit2", name = "converter-gson",     version.ref = "retrofit" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-animation = { module = "androidx.compose.animation:animation" }
 
 
 # Hilt
