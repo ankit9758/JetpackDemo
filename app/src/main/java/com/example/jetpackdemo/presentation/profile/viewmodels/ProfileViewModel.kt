@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.jetpackdemo.R
 import com.example.jetpackdemo.domain.model.User
 import com.example.jetpackdemo.domain.usecase.ProfileUseCase
-import com.example.jetpackdemo.presentation.profile.ProfileUiState
+import com.example.jetpackdemo.presentation.profile.state.ProfileUiState
 import com.example.jetpackdemo.utils.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

@@ -12,7 +12,7 @@ object Routes {
     const val TAB_HOME_SCREEN = "tab_home_screen"
     const val TAB_SEARCH_SCREEN = "tab_search_screen"
     const val TAB_SETTING_SCREEN = "tab_setting_screen"
-    const val TAB_PROFILE_SCREEN = "tab_profile_screen"
+    const val TAB_PRODUCTS_SCREEN = "tab_products_screen"
 
     // Home‑graph destinations
     const val HOME    = "home_screen/{email}"

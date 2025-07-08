@@ -4,7 +4,8 @@
     <string name="recover_password">Recover Password</string>
     <string name="verify_proceed">Verify and Proceed</string>
     <string name="get_code">Get Your Code </string>
-    <string name="update_profile">Update Profile</string>">
+    <string name="update_profile">Update Profile</string>
+    <string name="refresh">Refresh</string>
     <string name="register">Register</string>
     <string name="resend">Resend</string>
     <string name="email_hint">Enter your email</string>

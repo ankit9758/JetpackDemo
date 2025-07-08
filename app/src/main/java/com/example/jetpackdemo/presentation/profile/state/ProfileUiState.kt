@@ -1,4 +1,4 @@
-package com.example.jetpackdemo.presentation.profile
+package com.example.jetpackdemo.presentation.profile.state
 
 
 sealed class ProfileUiState {

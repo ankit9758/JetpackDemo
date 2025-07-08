@@ -66,7 +66,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.coil.compose)
     implementation(libs.image.cropper)
-
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
 
 

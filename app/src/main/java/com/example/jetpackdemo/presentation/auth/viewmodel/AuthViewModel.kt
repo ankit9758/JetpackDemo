@@ -9,7 +9,7 @@ import com.example.jetpackdemo.domain.usecase.ChangePasswordUseCase
 import com.example.jetpackdemo.domain.usecase.ForgotPasswordUseCase
 import com.example.jetpackdemo.domain.usecase.LoginUseCase
 import com.example.jetpackdemo.domain.usecase.RegisterUseCase
-import com.example.jetpackdemo.presentation.auth.AuthUiState
+import com.example.jetpackdemo.presentation.auth.state.AuthUiState
 import com.example.jetpackdemo.utils.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

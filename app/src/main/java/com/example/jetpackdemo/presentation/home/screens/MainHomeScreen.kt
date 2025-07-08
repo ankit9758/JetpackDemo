@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,8 +35,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackdemo.presentation.auth.viewmodel.AuthViewModel
 import com.example.jetpackdemo.presentation.home.model.bottomItems
+import com.example.jetpackdemo.presentation.products.viewmodels.ProductViewModel
 import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
+import com.example.jetpackdemo.ui.theme.Montserrat
 import com.example.jetpackdemo.utils.Routes
 
 @Composable
@@ -73,7 +76,7 @@ fun MainHomeScreen(
                                 label = {
                                     Text(
                                         bottomItem.label,
-                                        style = MaterialTheme.typography.bodyLarge,
+                                        style = TextStyle( fontFamily = Montserrat,),
                                         fontWeight = if (current?.destination?.route == bottomItem.route) FontWeight.Bold else FontWeight.Light
                                     )
                                 },
@@ -142,7 +145,10 @@ fun MainHomeScreen(
             ) {
                 composable(route = Routes.TAB_HOME_SCREEN) { HomeScreen() }
                 composable(route = Routes.TAB_SEARCH_SCREEN) { SearchScreen() }
-                composable(route = Routes.TAB_PROFILE_SCREEN) { ProfileScreen() }
+                composable(route = Routes.TAB_PRODUCTS_SCREEN) {
+                    val productViewModel: ProductViewModel = hiltViewModel()
+                    ProductsScreen(productViewModel)
+                }
                 composable(route = Routes.TAB_SETTING_SCREEN) {
                     val profileViewModel: ProfileViewModel = hiltViewModel()
                     val authViewModel: AuthViewModel = hiltViewModel()

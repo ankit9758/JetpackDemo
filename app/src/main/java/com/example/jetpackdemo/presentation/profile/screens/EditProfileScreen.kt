@@ -64,7 +64,7 @@ import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.example.jetpackdemo.R
 import com.example.jetpackdemo.domain.model.User
-import com.example.jetpackdemo.presentation.profile.ProfileUiState
+import com.example.jetpackdemo.presentation.profile.state.ProfileUiState
 import com.example.jetpackdemo.presentation.profile.viewmodels.ProfileViewModel
 import com.example.jetpackdemo.ui.theme.JetpackDemoTheme
 import com.example.jetpackdemo.utils.BackToolbar

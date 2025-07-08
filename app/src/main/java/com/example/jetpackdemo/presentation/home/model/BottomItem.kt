@@ -13,6 +13,6 @@ data class BottomItem(
 val bottomItems = listOf(
     BottomItem(Routes.TAB_HOME_SCREEN,    Icons.Default.Home,    "Home"),
     BottomItem(Routes.TAB_SEARCH_SCREEN,  Icons.Default.Search,  "Search"),
-    BottomItem(Routes.TAB_PROFILE_SCREEN, Icons.Default.Person,  "Profile"),
+    BottomItem(Routes.TAB_PRODUCTS_SCREEN, Icons.Default.Favorite,  "Products"),
     BottomItem(Routes.TAB_SETTING_SCREEN,Icons.Default.Settings,"Settings")
 )

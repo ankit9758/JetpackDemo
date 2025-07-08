@@ -10,7 +10,4 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(  private val userPreferences: UserPreferences) : ViewModel() {
 
-    fun logout() {
-        viewModelScope.launch { userPreferences.clear() }
-    }
 }

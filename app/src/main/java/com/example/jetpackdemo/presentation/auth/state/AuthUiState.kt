@@ -1,4 +1,4 @@
-package com.example.jetpackdemo.presentation.auth
+package com.example.jetpackdemo.presentation.auth.state
 
 
 sealed class AuthUiState {

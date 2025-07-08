@@ -10,12 +10,12 @@ activityCompose = "1.10.1"
 hilt = "2.50"
 room = "2.6.1"
 hiltNavigation = "1.1.0"
-composeBom = "2024.09.00"
+composeBom = "2025.06.01"
 datastore = "1.0.0"
 gson = "2.10.1"
 coil = "2.4.0"
 cropper = "4.6.0"
-
+retrofit = "2.9.0"
 nav_compose = "2.9.1"# July 2 2025 release with built‑in anims :contentReference[oaicite:1]{index=1}
 
 
@@ -38,7 +38,8 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "cropper" }
-
+retrofit  = { group = "com.squareup.retrofit2", name = "retrofit",        version.ref = "retrofit" }
+retrofit-gson  = { group = "com.squareup.retrofit2", name = "converter-gson",     version.ref = "retrofit" }
 
 
 # Hilt
