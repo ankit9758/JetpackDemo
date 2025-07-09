@@ -4,6 +4,8 @@ import android.text.TextUtils
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackdemo.R
+import com.example.jetpackdemo.di.IoDispatcher
+import com.example.jetpackdemo.di.MainDispatcher
 import com.example.jetpackdemo.domain.model.User
 import com.example.jetpackdemo.domain.usecase.ChangePasswordUseCase
 import com.example.jetpackdemo.domain.usecase.ForgotPasswordUseCase
@@ -12,6 +14,8 @@ import com.example.jetpackdemo.domain.usecase.RegisterUseCase
 import com.example.jetpackdemo.presentation.auth.state.AuthUiState
 import com.example.jetpackdemo.utils.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +32,9 @@ class AuthViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    @MainDispatcher private val dispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _uiState = MutableSharedFlow<AuthUiState>()
@@ -51,17 +58,20 @@ class AuthViewModel @Inject constructor(
 
 
     fun onLogin(email: String, password: String) {
-        viewModelScope.launch {
-            if (TextUtils.isEmpty(email)) {
+        viewModelScope.launch() {
+            if (email.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.email_error))
             } else if (!email.matches(emailRegex)) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_email))
-            } else if (TextUtils.isEmpty(password)) {
+            } else if (password.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.password_error))
             } else {
                 _uiState.emit( AuthUiState.Loading)
-                delay(1000)
-                val result = loginUseCase.invoke(email, password)
+                //delay(1000)
+                // 👇 Run DB call in IO
+                val result = withContext(ioDispatcher) {
+                    loginUseCase.invoke(email, password)
+                }
                 if (result != null) {
                     if(result.password==password){
                         saveUserData(result)
@@ -81,7 +91,7 @@ class AuthViewModel @Inject constructor(
 
     fun onRecoverPassword(email: String) {
         viewModelScope.launch {
-            if (TextUtils.isEmpty(email)) {
+            if (email.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.email_error))
             } else if (!email.matches(emailRegex)) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_email))
@@ -102,18 +112,18 @@ class AuthViewModel @Inject constructor(
 
     fun onChangePassword(currentPassword: String,newPassword:String,confirmPassword:String,email: String) {
         viewModelScope.launch {
-            if (TextUtils.isEmpty(newPassword)) {
+            if (newPassword.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.password_error))
             } else if (newPassword==currentPassword) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.new_password_same_error))
-            }else if (TextUtils.isEmpty(confirmPassword)) {
+            }else if (confirmPassword.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.confirm_password_error))
             } else if (confirmPassword!=newPassword) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.password_same_error))
             }else {
                 _uiState.emit( AuthUiState.Loading)
                 delay(1500)
-                val result = changePasswordUseCase.invoke(password = newPassword, email = email)
+                val result = changePasswordUseCase.changePassword(password = newPassword, email = email)
                 if (result) {
                     _uiState.emit(AuthUiState.Success)
                 } else {
@@ -128,17 +138,17 @@ class AuthViewModel @Inject constructor(
 
     fun onRegister(email: String, password: String,name: String,phoneNumber:String,confirmPassword:String) {
         viewModelScope.launch {
-            if (TextUtils.isEmpty(name)) {
+            if (name.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.name_error))
-            }else if (TextUtils.isEmpty(email)) {
+            }else if (email.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.email_error))
             } else if (!email.matches(emailRegex)) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.valid_email))
-            }else if (TextUtils.isEmpty(phoneNumber)) {
+            }else if (phoneNumber.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.phone_error))
-            } else if (TextUtils.isEmpty(password)) {
+            } else if (password.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.password_error))
-            }else if (TextUtils.isEmpty(confirmPassword)) {
+            }else if (confirmPassword.isBlank()) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.confirm_password_error))
             } else if (confirmPassword!=password) {
                 _uiState.emit(AuthUiState.ErrorWithId(R.string.password_same_error))

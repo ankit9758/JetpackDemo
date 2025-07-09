@@ -18,6 +18,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -41,32 +43,38 @@ object AppModule {
         return AuthRepositoryImpl(userDao)
     }
 
-    @Provides
-    fun provideLoginUseCase(authRepository : AuthRepository): LoginUseCase {
-        return LoginUseCase(authRepository)
-    }
+//    @Provides
+//    fun provideLoginUseCase(authRepository : AuthRepository): LoginUseCase {
+//        return LoginUseCase(authRepository)
+//    }
 
-    @Provides
-    fun provideRegisterUseCase(authRepository: AuthRepository): RegisterUseCase {
-        return RegisterUseCase(authRepository)
-    }
-    @Provides
-    fun provideChangePasswordUseCase(authRepository: AuthRepository): ChangePasswordUseCase {
-        return ChangePasswordUseCase(authRepository)
-    }
-    @Provides
-    fun provideForgotPasswordUseCase(authRepository: AuthRepository): ForgotPasswordUseCase {
-        return ForgotPasswordUseCase(authRepository)
-    }
+//    @Provides
+//    fun provideRegisterUseCase(authRepository: AuthRepository): RegisterUseCase {
+//        return RegisterUseCase(authRepository)
+//    }
+//    @Provides
+//    fun provideChangePasswordUseCase(authRepository: AuthRepository): ChangePasswordUseCase {
+//        return ChangePasswordUseCase(authRepository)
+//    }
+//    @Provides
+//    fun provideForgotPasswordUseCase(authRepository: AuthRepository): ForgotPasswordUseCase {
+//        return ForgotPasswordUseCase(authRepository)
+ //   }
     @Provides
     @Singleton
     fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
         return UserPreferences(context)
     }
 
+//    @Provides
+//    fun provideProfileUseCase(authRepository: AuthRepository): ProfileUseCase {
+//        return ProfileUseCase(authRepository)
+//    }
+    @MainDispatcher
     @Provides
-    fun provideProfileUseCase(authRepository: AuthRepository): ProfileUseCase {
-        return ProfileUseCase(authRepository)
-    }
+    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 
+    @IoDispatcher
+    @Provides
+    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

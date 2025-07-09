@@ -19,7 +19,11 @@ retrofit = "2.9.0"
 paging = "3.3.0"
 okhttp = "4.12.0" # or latest
 nav_compose = "2.9.1"# July 2 2025 release with built‑in anims :contentReference[oaicite:1]{index=1}
-
+truth = "1.4.2"
+mockk = "1.13.7"
+coroutines-test = "1.7.3"
+turbine = "1.0.0"
+uiTestJunit4Android = "1.8.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -61,6 +65,14 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-nav-compose   = { group = "androidx.navigation", name = "navigation-compose",  version.ref = "nav_compose" }
 
+#Testing libraries
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
+androidx-core-testing = "androidx.arch.core:core-testing:2.2.0"
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 
 [plugins]

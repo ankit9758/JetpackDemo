@@ -1,6 +1,5 @@
 package com.example.jetpackdemo.data.repositoryImpl
 
-import androidx.compose.ui.text.toLowerCase
 import com.example.jetpackdemo.data.local.dao.UserDao
 import com.example.jetpackdemo.data.local.entity.toEntity
 import com.example.jetpackdemo.data.local.entity.toUser
